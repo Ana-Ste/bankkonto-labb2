@@ -8,9 +8,9 @@ import se.ithogskolan.ana.bankkontolabb2.atm.exceptions.MaxWithdrawalExceededExc
 @Service
 public class ATMService {
 
-    private final AccountComponent account;
-
     private static final int MAX_WITHDRAWAL = 1000;
+
+    private final AccountComponent account;
 
     public ATMService(AccountComponent account) {
         this.account = account;

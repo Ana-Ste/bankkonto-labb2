@@ -9,6 +9,7 @@ import se.ithogskolan.ana.bankkontolabb2.atm.exceptions.InsufficientFundsExcepti
 import se.ithogskolan.ana.bankkontolabb2.atm.exceptions.InvalidAmountException;
 import se.ithogskolan.ana.bankkontolabb2.atm.exceptions.MaxWithdrawalExceededException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -34,6 +35,7 @@ public class ATMServiceTest {
         atmService.deposit(100);
 
         verify(account).deposit(100);
+        verifyNoMoreInteractions(account);
     }
 
     @Test
@@ -42,6 +44,8 @@ public class ATMServiceTest {
                 () -> atmService.withdraw(2000));
 
         verify(account, never()).withdraw(anyInt());
+        verify(account, never()).getBalance();
+        verifyNoMoreInteractions(account);
     }
 
     @Test
@@ -51,7 +55,9 @@ public class ATMServiceTest {
         assertThrows(InsufficientFundsException.class,
                 () -> atmService.withdraw(150));
 
+        verify(account).getBalance();
         verify(account, never()).withdraw(anyInt());
+        verifyNoMoreInteractions(account);
     }
 
     @Test
@@ -60,6 +66,19 @@ public class ATMServiceTest {
 
         atmService.withdraw(200);
 
+        verify(account).getBalance();
         verify(account).withdraw(200);
+        verifyNoMoreInteractions(account);
+    }
+
+    @Test
+    void getBalanceReturnsBalanceFromAccount() {
+        when(account.getBalance()).thenReturn(777);
+
+        int balance = atmService.getBalance();
+
+        assertEquals(777, balance);
+        verify(account).getBalance();
+        verifyNoMoreInteractions(account);
     }
 }
